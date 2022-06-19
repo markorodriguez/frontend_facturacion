@@ -27,13 +27,12 @@ generarFactura.layout = Admin;
 
 export async function getServerSideProps() {
 
-  const res = await fetch('https://dummyjson.com/products?limit=10&skip=10&select=title,price');
+  const res = await fetch('http://localhost:5000/productos/obtener');
   const data = await res.json();
 
-  await console.log(data.products)
   return {
     props: {
-      data: data.products
+      data: data
     },
   }
 }

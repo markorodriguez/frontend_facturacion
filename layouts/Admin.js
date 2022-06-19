@@ -5,11 +5,13 @@ import React from "react";
 import AdminNavbar from "../components/Navbars/AdminNavbar.js";
 import Sidebar from "../components/Sidebar/Sidebar.js";
 import HeaderStats from "../components/Headers/HeaderStats.js";
-import FooterAdmin from "../components/Footers/FooterAdmin.js";
+
+import Auth from "HOC/Auth.js";
 
 export default function Admin({ children }) {
   return (
-    <>
+    <Auth>
+      <div>
       <Sidebar />
       <div className="relative md:ml-64 min-h-screen bg-blueGray-100">
         <AdminNavbar />
@@ -19,6 +21,7 @@ export default function Admin({ children }) {
           {children}
         </div>
       </div>
-    </>
+      </div>
+    </Auth>
   );
 }
