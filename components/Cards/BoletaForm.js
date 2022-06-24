@@ -14,7 +14,7 @@ export default function Boleta({ handleChange, products}) {
   const [listado, setListado] = useState([]);
 
   const getInfo = () => {
-    Axios.post("http://localhost:5000/clientes/consumir-dni", {
+    Axios.post("https://backendfacturacion.herokuapp.com/consumir-dni", {
       dni: dni,
     })
       .then((res) => {
@@ -38,7 +38,7 @@ export default function Boleta({ handleChange, products}) {
         currentUser: JSON.parse(Cookies.get('usuario')).usuario.id_usuario
       }
 
-      Axios.post("http://localhost:5000/facturas/generar-boleta", data).then((r)=>{
+      Axios.post("https://backendfacturacion.herokuapp.com/facturas/generar-boleta", data).then((r)=>{
         console.log('aea')
       }).catch((err)=>{
         console.log(err, 'error')

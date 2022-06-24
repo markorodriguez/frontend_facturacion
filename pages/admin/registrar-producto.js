@@ -10,7 +10,7 @@ export default function registerProduct({ data }) {
 
   const registrarProducto = (e) => {
     e.preventDefault()
-    axios.post('http://localhost:5000/productos/agregar-producto', {producto: producto}).then((r)=>{
+    axios.post('https://backendfacturacion.herokuapp.com/productos/agregar-producto', {producto: producto}).then((r)=>{
       console.log(r.data)
     }).catch((err)=>{
       console.log(err)

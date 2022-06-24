@@ -33,7 +33,7 @@ export default function Tables({ data, boletas, todo }) {
   }
 
   const updateEstado = (val) => {
-    axios.post('http://localhost:5000/facturas/anular', {id: val}).then(()=>{
+    axios.post('https://backendfacturacion.herokuapp.com/facturas/anular', {id: val}).then(()=>{
       console.log('actualizado')
     }).catch((err)=>{
       console.log(err)
@@ -174,7 +174,7 @@ export default function Tables({ data, boletas, todo }) {
 Tables.layout = Admin;
 
 export async function getServerSideProps() {
-  const res = await fetch('http://localhost:5000/facturas/obtener-facturas')
+  const res = await fetch('https://backendfacturacion.herokuapp.com/facturas/obtener-facturas')
   const data = await res.json()
   console.log(data.facturas)
   return {

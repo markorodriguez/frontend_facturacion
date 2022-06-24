@@ -16,7 +16,7 @@ export default function FacturaForm({ handleChange, products }) {
   const [listado, setListado] = useState([]);
 
   const getInfo = () => {
-    Axios.post("http://localhost:5000/clientes/consumir-ruc", {
+    Axios.post("https://backendfacturacion.herokuapp.com/clientes/consumir-ruc", {
       ruc: ruc,
     })
       .then((res) => {
@@ -42,7 +42,7 @@ export default function FacturaForm({ handleChange, products }) {
         tiempo: Date.now()-timeStapInicio
       }
 
-      Axios.post('http://localhost:5000/facturas/generar-factura', data).then((r)=>{
+      Axios.post('https://backendfacturacion.herokuapp.com/facturas/generar-factura', data).then((r)=>{
         console.log(r.data)
       })
     }else{
