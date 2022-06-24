@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import nookies, { parseCookies } from "nookies";
 import Cookies from "js-cookie"
 import { useRouter } from "next/router";
 import jwt from "jsonwebtoken";

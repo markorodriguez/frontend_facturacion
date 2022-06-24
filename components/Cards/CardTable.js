@@ -41,7 +41,7 @@ export default function CardTable({ color }) {
                       : "bg-blueGray-600 text-blueGray-200 border-blueGray-500")
                   }
                 >
-                  Project
+                  Factura
                 </th>
                 <th
                   className={
@@ -51,7 +51,7 @@ export default function CardTable({ color }) {
                       : "bg-blueGray-600 text-blueGray-200 border-blueGray-500")
                   }
                 >
-                  Budget
+                  Importe
                 </th>
                 <th
                   className={
@@ -61,7 +61,7 @@ export default function CardTable({ color }) {
                       : "bg-blueGray-600 text-blueGray-200 border-blueGray-500")
                   }
                 >
-                  Status
+                  Estado
                 </th>
                 <th
                   className={
@@ -71,7 +71,7 @@ export default function CardTable({ color }) {
                       : "bg-blueGray-600 text-blueGray-200 border-blueGray-500")
                   }
                 >
-                  Users
+                  Cliente
                 </th>
                 <th
                   className={
@@ -81,7 +81,7 @@ export default function CardTable({ color }) {
                       : "bg-blueGray-600 text-blueGray-200 border-blueGray-500")
                   }
                 >
-                  Completion
+                  Fecha
                 </th>
                 <th
                   className={

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import Axios from "axios"
+import Axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import Cookies from "js-cookie"
+import "react-toastify/dist/ReactToastify.css";
 // components
 
 export default function FacturaForm({ handleChange, products }) {
@@ -8,52 +11,56 @@ export default function FacturaForm({ handleChange, products }) {
   const [ruc, setRuc] = useState("");
   const [empresa, setEmpresa] = useState({});
 
+  const [timeStapInicio, setTimeStapInicio] = useState();
+
   const [listado, setListado] = useState([]);
 
   const getInfo = () => {
-    Axios.post('http://localhost:5000/clientes/consumir-ruc', {
-      ruc: ruc
-    }).then((res) => {
-      //setEmpresa(res.data.data)
-      if (res.data.message = "Success") {
-        console.log(res.data)
-        setEmpresa(res.data)
-      }
-    }).catch((err) => {
-      console.log(err)
+    Axios.post("http://localhost:5000/clientes/consumir-ruc", {
+      ruc: ruc,
     })
-  }
+      .then((res) => {
+        //setEmpresa(res.data.data)
+        if ((res.data.message = "Success")) {
+          console.log(res.data);
+          setEmpresa(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /*
-    const data = {
-      ruc: empresa.ruc,
-      razon_social: empresa.nombre_o_razon_social,
-      estado: empresa.estado,
-      condicion: empresa.condicion,
-      direccion: empresa.direccion,
-      departamento: empresa.departamento,
-      provincia: empresa.provincia,
-      distrito: empresa.distrito,
-      id_prod: products[indexProd].id,
-      nombre_prod: products[indexProd].title,
-      precio_prod: products[indexProd].price,
-      cantidad: cantidad,
-      total: products[indexProd].price * cantidad,
-    }
-    Axios.post('http://localhost:4000/registrar-factura', data).then((res)=>{
-      console.log(res.data)
-    }).catch((err)=>{
-      console.log(err)
-    })
-    
-    */
 
-  }
+    if(listado.length>0){
+      const data = {
+        empresa: empresa,
+        listado: listado,
+        currentUser: JSON.parse(Cookies.get('usuario')).usuario.id_usuario,
+        tiempo: Date.now()-timeStapInicio
+      }
+
+      Axios.post('http://localhost:5000/facturas/generar-factura', data).then((r)=>{
+        console.log(r.data)
+      })
+    }else{
+      toast.warning('No hay productos seleccionados')
+    }
+
+    
+  };
+
+  const quitarListado = (value) => {
+    const elementoRemover = listado.splice(value, 1);
+    const newListado = listado.filter((item) => item !== elementoRemover);
+    setListado(newListado);
+  };
 
   return (
     <>
+      <ToastContainer />
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100  border-0">
         <div className="rounded-t bg-white mb-0 px-6 py-6">
           <div className="text-center flex justify-between">
@@ -86,11 +93,22 @@ export default function FacturaForm({ handleChange, products }) {
                     RUC
                   </label>
                   <input
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     onChange={(e) => setRuc(e.target.value)}
                   />
-                  <span onClick={() => { getInfo() }} className="bg-none border-b-2 text-blueGray-400 text-sm cursor-pointer">
+                  <span
+                    onClick={() => {
+                      getInfo();
+                      setTimeStapInicio(new Date());
+                    }}
+                    className="bg-none border-b-2 text-blueGray-400 text-sm cursor-pointer"
+                  >
                     Obtener datos
                   </span>
                 </div>
@@ -107,7 +125,7 @@ export default function FacturaForm({ handleChange, products }) {
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="jesse@example.com"
-                    value={empresa.nombre != null ? empresa.nombre : ''}
+                    value={empresa.nombre != null ? empresa.nombre : ""}
                     disabled
                   />
                 </div>
@@ -123,7 +141,7 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.estado != null ? empresa.estado : ''}
+                    value={empresa.estado != null ? empresa.estado : ""}
                     disabled
                   />
                 </div>
@@ -139,7 +157,7 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.condicion != null ? empresa.condicion : ''}
+                    value={empresa.condicion != null ? empresa.condicion : ""}
                     disabled
                   />
                 </div>
@@ -155,8 +173,10 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.telefono != null ? empresa.telefono : ''}
-                    onChange={(e) => setEmpresa({ ...empresa, telefono: e.target.value })}
+                    value={empresa.telefono != null ? empresa.telefono : ""}
+                    onChange={(e) =>
+                      setEmpresa({ ...empresa, telefono: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -171,8 +191,10 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.correo != null ? empresa.correo : ''}
-                    onChange={(e) => setEmpresa({ ...empresa, correo: e.target.value })}
+                    value={empresa.correo != null ? empresa.correo : ""}
+                    onChange={(e) =>
+                      setEmpresa({ ...empresa, correo: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -195,7 +217,7 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.direccion != null ? empresa.direccion : ''}
+                    value={empresa.direccion != null ? empresa.direccion : ""}
                     disabled
                   />
                 </div>
@@ -211,7 +233,9 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="email"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.departamento != null ? empresa.departamento : ''}
+                    value={
+                      empresa.departamento != null ? empresa.departamento : ""
+                    }
                     disabled
                   />
                 </div>
@@ -227,8 +251,7 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-
-                    value={empresa.provincia != null ? empresa.provincia : ''}
+                    value={empresa.provincia != null ? empresa.provincia : ""}
                     disabled
                   />
                 </div>
@@ -244,7 +267,7 @@ export default function FacturaForm({ handleChange, products }) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={empresa.distrito != null ? empresa.distrito : ''}
+                    value={empresa.distrito != null ? empresa.distrito : ""}
                     disabled
                   />
                 </div>
@@ -270,6 +293,7 @@ export default function FacturaForm({ handleChange, products }) {
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     value={indexProd}
                     onChange={(e) => {
+                      setCantidad(0)
                       setIndexProd(e.target.value);
                     }}
                   >
@@ -279,7 +303,6 @@ export default function FacturaForm({ handleChange, products }) {
                       </option>
                     ))}
                   </select>
-
                 </div>
               </div>
               <div className="relative w-full lg:w-4/12 mb-3 px-4">
@@ -292,11 +315,24 @@ export default function FacturaForm({ handleChange, products }) {
                 <input
                   type="number"
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  defaultValue="1"
-                  onChange={(e) => {
-                    setCantidad(e.target.value);
+                  value={cantidad}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
                   }}
-                  min="1"
+                  onChange={(e) => {
+                    if (products[indexProd].stock >= e.target.value) {
+                      setCantidad(e.target.value);
+                    } else {
+                      e.target.value = Number.parseInt(products[indexProd].stock);
+                      setCantidad(e.target.value);
+                      toast.warning(
+                        `El stock de ${products[indexProd].nombreproducto} es ${products[indexProd].stock}`
+                      );
+                    }
+                  }}
+                  min="0"
                 />
               </div>
               <div className="relative flex items-center w-full lg:w-4/12 ">
@@ -304,27 +340,124 @@ export default function FacturaForm({ handleChange, products }) {
                   type="button"
                   className="bg-blueGray-600 mx-4 active:bg-green-600 text-white font-bold uppercase text-xs px-4 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 py-2 mt-2 ease-linear transition-all duration-150"
                   onClick={() => {
-                    setListado((prev) =>{
-                      return [...prev, {
-                        nombreproducto: products[indexProd].nombreproducto,
-                        cantidad: cantidad,
-                        precio: products[indexProd].precio,
-                      }]
-                    })
+                    products[indexProd].stock -= cantidad;
+                    setListado((prev) => {
+                      return [
+                        ...prev,
+                        {
+                          id_producto: products[indexProd].id_producto,
+                          nombreproducto: products[indexProd].nombreproducto,
+                          cantidad: cantidad,
+                          precio: products[indexProd].precio,
+                        },
+                      ];
+                    });
                   }}
+                  disabled={products[indexProd].stock === 0 ? true : false}
                 >
                   Agregar
                 </button>
               </div>
             </div>
 
-            <hr className="mt-6 border-b-1 border-blueGray-300" />
-            <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Resumen
-            </h6>
-
-
-            <hr className="mt-6 border-b-1 border-blueGray-300" />
+            {listado.length > 0 ? (
+              <>
+                <hr className="mt-6 border-b-1 border-blueGray-300" />
+                <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
+                  Resumen
+                </h6>
+                <div className="relative overflow-x-auto px-4 ">
+                  <table className="w-full  text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          Producto
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Cantidad
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Precio
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Importe
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {listado.map((item, index) => {
+                        return (
+                          <tr
+                            key={index}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
+                            <th
+                              scope="row"
+                              className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                            >
+                              {item.nombreproducto}
+                            </th>
+                            <td className="px-6 py-4 text-center">
+                              {item.cantidad}
+                            </td>
+                            <td className="px-6 py-4 text-center">{item.precio}</td>
+                            <td className="px-6 py-4 text-center">
+                              {"S/ " + item.cantidad * item.precio}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <span
+                                className="cursor-pointer hover:underline font-medium text-blue-600 dark:text-blue-500 "
+                                onClick={() => {
+                                  quitarListado(index);
+                                  products[indexProd].stock = Number.parseInt(products[indexProd].stock) + Number.parseInt(item.cantidad);
+                                }}
+                              >
+                                Eliminar
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="text-center font-bold">
+                        <td></td>
+                        <td></td>
+                        <td>Total</td>
+                        <td>
+                          {"S/ " +
+                            listado
+                              .reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0)
+                              .toFixed(2)}
+                        </td>
+                        <td></td>
+                      </tr>
+                      <tr className="text-center font-bold">
+                        <td></td>
+                        <td></td>
+                        <td>Total + IGV </td>
+                        <td>
+                          {"S/ " +
+                            (
+                              listado.reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0) +
+                              listado.reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0) *
+                                0.18
+                            ).toFixed(2)}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </>
+            ) : null}
 
             <div className="w-full mt-6 text-right">
               <button

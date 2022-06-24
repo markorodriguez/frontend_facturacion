@@ -75,7 +75,7 @@ export default function Sidebar() {
             <hr className="my-4 md:min-w-full" />
             {/* Heading */}
             <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Admin Layout Pages
+              Mantenimiento
             </h6>
             {/* Navigation */}
 
@@ -170,7 +170,7 @@ export default function Sidebar() {
                           : "text-blueGray-300")
                       }
                     ></i>{" "}
-                    Tables
+                    Registros
                   </a>
                 </Link>
               </li>

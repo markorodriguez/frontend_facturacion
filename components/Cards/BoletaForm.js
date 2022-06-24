@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import Axios from "axios";
-
-export default function Boleta({ handleChange, products }) {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie"
+export default function Boleta({ handleChange, products}) {
   const [indexProd, setIndexProd] = useState(0);
   const [cantidad, setCantidad] = useState(1);
   const [dni, setDni] = useState("");
   const [persona, setPersona] = useState({});
 
+  const [timeStapInicio, setTimeStapInicio] = useState();
+
+  const [listado, setListado] = useState([]);
+
   const getInfo = () => {
-    Axios.post("http://localhost:4000/verificar-dni", {
+    Axios.post("http://localhost:5000/clientes/consumir-dni", {
       dni: dni,
     })
       .then((res) => {
-        setPersona(res.data.data);
+        setPersona(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -21,25 +27,39 @@ export default function Boleta({ handleChange, products }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      dni: persona.numero,
-      nombre: persona.nombres,
-      apellido_paterno: persona.apellido_paterno,
-      apellido_materno: persona.apellido_materno,
-      id_prod: products[indexProd].id,
-      nombre_prod: products[indexProd].title,
-      precio_prod: products[indexProd].price,
-      cantidad: cantidad,
-      total: products[indexProd].price * cantidad,
-    };
+   
+    if(listado.length > 0 ){
+      
+      const data = {
+        dni: dni,
+        persona: persona,
+        listado: listado,
+        tiempo: Date.now()-timeStapInicio,
+        currentUser: JSON.parse(Cookies.get('usuario')).usuario.id_usuario
+      }
 
-    Axios.post("http://localhost:4000/registrar-boleta", data).then((res)=>{
-      console.log(res.data)
-    }).catch((err)=>console.log(err))
+      Axios.post("http://localhost:5000/facturas/generar-boleta", data).then((r)=>{
+        console.log('aea')
+      }).catch((err)=>{
+        console.log(err, 'error')
+      })
+
+
+    }else{
+      toast.warning('No hay productos en la lista')
+    }
 
   };
+
+  const quitarListado = (value) => {
+    const elementoRemover = listado.splice(value, 1);
+    const newListado = listado.filter((item) => item !== elementoRemover);
+    setListado(newListado);
+  };
+
   return (
     <>
+    <ToastContainer/>
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100  border-0">
         <div className="rounded-t bg-white mb-0 px-6 py-6">
           <div className="text-center flex justify-between">
@@ -76,10 +96,16 @@ export default function Boleta({ handleChange, products }) {
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Ingrese su DNI"
                     value={dni}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                     onChange={(e) => setDni(e.target.value)}
                   />
                   <span
                     onClick={() => {
+                      setTimeStapInicio(Date.now())
                       getInfo();
                     }}
                     className="bg-none border-b-2 text-blueGray-400 text-sm cursor-pointer"
@@ -100,7 +126,7 @@ export default function Boleta({ handleChange, products }) {
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Ingrese su nombre"
-                    value={persona.nombres !== null ? persona.nombres : ""}
+                    value={persona.nombre !== null ? persona.nombre : ""}
                     disabled
                   />
                 </div>
@@ -118,8 +144,8 @@ export default function Boleta({ handleChange, products }) {
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Ingrese su apellido paterno"
                     value={
-                      persona.apellido_paterno !== null
-                        ? persona.apellido_paterno
+                      persona.apPaterno !== null
+                        ? persona.apPaterno
                         : ""
                     }
                     disabled
@@ -139,15 +165,51 @@ export default function Boleta({ handleChange, products }) {
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Ingrese su apellido materno"
                     value={
-                      persona.apellido_materno !== null
-                        ? persona.apellido_materno
+                      persona.apMaterno !== null
+                        ? persona.apMaterno
                         : ""
                     }
                     disabled
                   />
                 </div>
               </div>
+              <div className="w-full lg:w-6/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label
+                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                    htmlFor="grid-password"
+                  >
+                    Teléfono
+                  </label>
+                  <input
+                    type="text"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={(e) =>
+                      setPersona({ ...persona, telefono: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full lg:w-6/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label
+                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                    htmlFor="grid-password"
+                  >
+                    Correo
+                  </label>
+                  <input
+                    type="text"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={(e) =>
+                      setPersona({ ...persona, correo: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
             </div>
+
+            
 
             <hr className="mt-6 border-b-1 border-blueGray-300" />
 
@@ -155,7 +217,7 @@ export default function Boleta({ handleChange, products }) {
               Productos
             </h6>
             <div className="flex flex-wrap">
-              <div className="w-full lg:w-12/12 px-4">
+              <div className="w-full lg:w-4/12 px-4">
                 <div className="relative w-full mb-3">
                   <label
                     className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -168,70 +230,172 @@ export default function Boleta({ handleChange, products }) {
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     value={indexProd}
                     onChange={(e) => {
+                      setCantidad(0)
                       setIndexProd(e.target.value);
                     }}
                   >
                     {products.map((producto, index) => (
                       <option value={index} key={index}>
-                        {producto.title.toUpperCase()}
+                        {producto.nombreproducto}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Precio
-                  </label>
-                  <input
-                    type="email"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={products[indexProd].price}
-                    disabled
-                  />
-                </div>
-              </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Cantidad
-                  </label>
-                  <input
-                    type="number"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    onChange={(e) => {
+              <div className="relative w-full lg:w-4/12 mb-3 px-4">
+                <label
+                  className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                  htmlFor="grid-password"
+                >
+                  Cantidad
+                </label>
+                <input
+                  type="number"
+                  className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  value={cantidad}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                  onChange={(e) => {
+                    if (products[indexProd].stock >= e.target.value) {
                       setCantidad(e.target.value);
-                    }}
-                    value={cantidad}
-                    min="1"
-                  />
-                </div>
+                    } else {
+                      e.target.value = products[indexProd].stock;
+                      setCantidad(e.target.value);
+                      toast.warning(
+                        `El stock de ${products[indexProd].nombreproducto} es ${products[indexProd].stock}`
+                      );
+                    }
+                  }}
+                  min="0"
+                />
               </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Importe
-                  </label>
-                  <input
-                    type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Monto con IGV"
-                    value={products[indexProd].price * cantidad}
-                    disabled
-                  />
-                </div>
+              <div className="relative flex items-center w-full lg:w-4/12 ">
+                <button
+                  type="button"
+                  className="bg-blueGray-600 mx-4 active:bg-green-600 text-white font-bold uppercase text-xs px-4 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 py-2 mt-2 ease-linear transition-all duration-150"
+                  onClick={() => {
+                    products[indexProd].stock -= cantidad;
+                    setListado((prev) => {
+                      return [
+                        ...prev,
+                        {
+                          id_producto: products[indexProd].id_producto,
+                          nombreproducto: products[indexProd].nombreproducto,
+                          cantidad: cantidad,
+                          precio: products[indexProd].precio,
+                        },
+                      ];
+                    });
+                  }}
+                  disabled={products[indexProd].stock === 0 ? true : false}
+                >
+                  Agregar
+                </button>
               </div>
             </div>
+
+            {listado.length > 0 ? (
+              <>
+                <hr className="mt-6 border-b-1 border-blueGray-300" />
+                <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
+                  Resumen
+                </h6>
+                <div className="relative overflow-x-auto px-4 ">
+                  <table className="w-full  text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          Producto
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Cantidad
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Precio
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center">
+                          Importe
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {listado.map((item, index) => {
+                        return (
+                          <tr
+                            key={index}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
+                            <th
+                              scope="row"
+                              className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                            >
+                              {item.nombreproducto}
+                            </th>
+                            <td class="px-6 py-4 text-center">
+                              {item.cantidad}
+                            </td>
+                            <td className="px-6 py-4 text-center">{item.precio}</td>
+                            <td className="px-6 py-4 text-center">
+                              {"S/ " + item.cantidad * item.precio}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                              <span
+                                className="cursor-pointer hover:underline font-medium text-blue-600 dark:text-blue-500 "
+                                onClick={() => {
+                                  quitarListado(index);
+                                  products[indexProd].stock = Number.parseInt(products[indexProd].stock) + Number.parseInt(item.cantidad);
+                                }}
+                              >
+                                Eliminar
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="text-center font-bold">
+                        <td></td>
+                        <td></td>
+                        <td>Total</td>
+                        <td>
+                          {"S/ " +
+                            listado
+                              .reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0)
+                              .toFixed(2)}
+                        </td>
+                        <td></td>
+                      </tr>
+                      <tr className="text-center font-bold">
+                        <td></td>
+                        <td></td>
+                        <td>Total + IGV </td>
+                        <td>
+                          {"S/ " +
+                            (
+                              listado.reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0) +
+                              listado.reduce((total, item) => {
+                                return total + item.cantidad * item.precio;
+                              }, 0) *
+                                0.18
+                            ).toFixed(2)}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </>
+            ) : null}
+
             <div className="w-full mt-6 text-right">
               <button
                 type="reset"
