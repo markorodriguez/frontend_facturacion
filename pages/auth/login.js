@@ -28,7 +28,7 @@ export default function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post(`https://backendfacturacion.herokuapp.com/usuarios/login`, {dni: datos.usuario, contraseña: datos.contrasena, checked: checked}).then((response) => {
+    axios.post('https://backendfacturacion.herokuapp.com/usuarios/login', {dni: datos.usuario, contraseña: datos.contrasena, checked: checked}).then((response) => {
       if(response.data.message === 'Login exitoso'){
         setCookie(null, 'usuario',JSON.stringify({token: response.data.token, usuario: response.data.data}))
         toast.success(response.data.message, {autoClose: 1500})
