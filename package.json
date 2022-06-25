@@ -5,6 +5,7 @@
   "description": "Notus NextJS - A free Tailwind CSS, NextJS and React Ui Kit and Admin by Creative Tim.",
   "repository": "https://github.com/creativetimofficial/notus-nextjs",
   "license": "MIT",
+  "proxy": "https://backendfacturacion.herokuapp.com/",
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
