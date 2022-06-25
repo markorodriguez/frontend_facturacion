@@ -59,7 +59,6 @@ export default function Tables({ data, boletas, todo }) {
       selector: (row) => row.importetotal,
       cell: (row) => <div>S/. {row.importetotal + row.igv}</div>
     },
-      
     {
       name: "ESTADO",
       selector: (row) => row.estado,

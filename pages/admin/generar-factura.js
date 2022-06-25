@@ -19,7 +19,6 @@ export default function generarFactura({ data }) {
         <div className="w-full mx-auto lg:w-8/12 px-4">
           {isFactura ? <FacturaForm handleChange={handleChange}  products={data} /> : <BoletaForm handleChange={handleChange} products={data}  />}
         </div>
-
       </div>
     </>
   )
