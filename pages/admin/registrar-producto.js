@@ -171,7 +171,7 @@ export default function registerProduct({ data }) {
 registerProduct.layout = Admin;
 
 export async function getServerSideProps() {
-  const res = await fetch('http://localhost:5000/productos/categorias')
+  const res = await fetch('https://backendfacturacion.herokuapp.com/productos/categorias')
   const data = await res.json()
   return {
     props: {

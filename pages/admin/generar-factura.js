@@ -29,7 +29,7 @@ generarFactura.layout = Admin;
 
 export async function getServerSideProps() {
 
-  const res = await fetch('http://localhost:5000/productos/obtener');
+  const res = await fetch('https://backendfacturacion.herokuapp.com/productos/obtener');
   const data = await res.json();
   return {
     props: {
