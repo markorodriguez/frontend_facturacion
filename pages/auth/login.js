@@ -35,7 +35,7 @@ export default function Login() {
         setCookie(null, 'usuario',JSON.stringify({token: response.data.token, usuario: response.data.data}))
         toast.success(response.data.message, {autoClose: 1500})
         setTimeout(() => {
-          router.push('/admin/dashboard')
+          router.push('/admin/generar-factura')
         }, 1500)
       }else{
         toast.error(response.data.message)

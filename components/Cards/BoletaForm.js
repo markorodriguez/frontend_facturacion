@@ -45,7 +45,7 @@ export default function Boleta({ handleChange, products}) {
           setPersona({})
           setListado([])
           e.target.reset()
-          toast.success("Factura generada")
+          toast.success("Boleta generada")
         }else{
           toast.warn('Ha ocurrido un error')
         }

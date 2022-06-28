@@ -12,7 +12,7 @@ const Registrar = ({data, change}) => {
     
       const registrarProducto = (e) => {
         e.preventDefault()
-        axios.post(`${backend_url}/agregar-producto`, {producto: producto}).then((r)=>{
+        axios.post(`${backend_url}/productos/agregar-producto`, {producto: producto}).then((r)=>{
           if(r.data.message =="success"){
             toast.success('Producto editado')
             router.push("/admin/registrar-producto")
@@ -98,7 +98,7 @@ const Registrar = ({data, change}) => {
                 Precio
               </label>
               <input
-                type="number"
+                type="text"
                 className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="0.00"
                 min="1"
