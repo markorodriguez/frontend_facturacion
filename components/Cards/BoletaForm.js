@@ -3,6 +3,7 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie"
+import backend_url from 'config/backend';
 export default function Boleta({ handleChange, products}) {
   const [indexProd, setIndexProd] = useState(0);
   const [cantidad, setCantidad] = useState(1);
@@ -14,7 +15,7 @@ export default function Boleta({ handleChange, products}) {
   const [listado, setListado] = useState([]);
 
   const getInfo = () => {
-    Axios.post("https://backendfacturacion.herokuapp.com/clientes/consumir-dni", {
+    Axios.post(`${backend_url}/clientes/consumir-dni`, {
       dni: dni,
     })
       .then((res) => {
@@ -38,8 +39,16 @@ export default function Boleta({ handleChange, products}) {
         currentUser: JSON.parse(Cookies.get('usuario')).usuario.id_usuario
       }
 
-      Axios.post("https://backendfacturacion.herokuapp.com/facturas/generar-boleta", data).then((r)=>{
-        console.log('aea')
+      Axios.post(`${backend_url}/facturas/generar-boleta`, data).then((r)=>{
+        console.log(r)
+        if(r.data.message = "success"){
+          setPersona({})
+          setListado([])
+          e.target.reset()
+          toast.success("Factura generada")
+        }else{
+          toast.warn('Ha ocurrido un error')
+        }
       }).catch((err)=>{
         console.log(err, 'error')
       })
@@ -184,6 +193,7 @@ export default function Boleta({ handleChange, products}) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    value={persona.telefono != null ? persona.telefono : ""}
                     onChange={(e) =>
                       setPersona({ ...persona, telefono: e.target.value })
                     }
@@ -201,6 +211,7 @@ export default function Boleta({ handleChange, products}) {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    value={persona.correo != null ? persona.correo : ""}
                     onChange={(e) =>
                       setPersona({ ...persona, correo: e.target.value })
                     }

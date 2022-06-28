@@ -10,7 +10,7 @@ export default function Datatable({filteredItems, title, columns, subHeaderCompo
     data={filteredItems}
     noHeader={false}
     pagination
-    paginationRowsPerPageOptions={[5]}
+    paginationRowsPerPageOptions={[5, 10]}
     subHeader
     subHeaderAlign={Alignment.RIGHT}
     subHeaderComponent={subHeaderComponentMemo}

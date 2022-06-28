@@ -2,11 +2,13 @@ import React, { useEffect, useState, useMemo } from "react";
 // components
 import Datatable from "components/Table/Datatable";
 import Search from "components/Table/Search.js";
+import backend_url from 'config/backend';
 
 // layout for page
 
 import Admin from "layouts/Admin.js";
 import axios from "axios";
+
 
 export default function Tables({ data, boletas, todo }) {
 
@@ -33,7 +35,7 @@ export default function Tables({ data, boletas, todo }) {
   }
 
   const updateEstado = (val) => {
-    axios.post('https://backendfacturacion.herokuapp.com/facturas/anular', {id: val}).then(()=>{
+    axios.post(`${backend_url}/facturas/anular`, {id: val}).then(()=>{
       console.log('actualizado')
     }).catch((err)=>{
       console.log(err)
@@ -145,6 +147,7 @@ export default function Tables({ data, boletas, todo }) {
 
   return (
     <>
+
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
           <div className="shadow-lg ">
@@ -173,7 +176,7 @@ export default function Tables({ data, boletas, todo }) {
 Tables.layout = Admin;
 
 export async function getServerSideProps() {
-  const res = await fetch('https://backendfacturacion.herokuapp.com/facturas/obtener-facturas')
+  const res = await fetch(`${backend_url}/facturas/obtener-facturas`)
   const data = await res.json()
   console.log(data.facturas)
   return {

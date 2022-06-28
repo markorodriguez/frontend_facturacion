@@ -22,13 +22,15 @@ export default function Login() {
   const router = useRouter()
 
   useEffect(()=>{
-   Cookies.remove('usuario', { path: '' })
+   Cookies.remove('usuario', {path: '/'})
+   Cookies.remove('usuario', {path: '/admin'})
+   Cookies.remove('usuario', {path: ''})
   }, [])
 
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('https://backendfacturacion.herokuapp.com/usuarios/login', {dni: datos.usuario, contraseña: datos.contrasena, checked: checked}).then((response) => {
+    axios.post(`${backend_url}/usuarios/login`, {dni: datos.usuario, contraseña: datos.contrasena, checked: checked}).then((response) => {
       if(response.data.message === 'Login exitoso'){
         setCookie(null, 'usuario',JSON.stringify({token: response.data.token, usuario: response.data.data}))
         toast.success(response.data.message, {autoClose: 1500})
@@ -115,17 +117,6 @@ export default function Login() {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-          <div className="flex flex-wrap mt-6 relative">
-            <div className="w-1/2">
-            </div>
-            <div className="w-1/2 text-right">
-              <Link href="/auth/register">
-                <a href="#pablo" className="text-blueGray-200">
-                  <small>¿No tienes cuenta?</small>
-                </a>
-              </Link>
             </div>
           </div>
         </div>

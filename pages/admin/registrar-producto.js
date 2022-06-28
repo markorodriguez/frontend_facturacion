@@ -1,13 +1,12 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
 import Admin from "layouts/Admin.js";
-
+import backend_url from 'config/backend';
 import Registrar from 'components/Productos/Registrar';
 import Mantenimiento from 'components/Productos/Mantenimiento';
+export default function registerProduct({ data }) {
 
-export default function registerProduct({ data, dataProd }) {
-
-  const [showRegistro, setShowRegistro ] = useState(true)
+  const [showRegistro, setShowRegistro] = useState(true)
 
   const handleChange = () => {
     setShowRegistro(!showRegistro)
@@ -17,7 +16,7 @@ export default function registerProduct({ data, dataProd }) {
     <>
       <div className="flex flex-wrap">
         <div className="w-full mx-auto lg:w-8/12 px-4">
-            {showRegistro ? <Registrar data={data} change={handleChange} /> : <Mantenimiento data={data} dataProd={dataProd} change={handleChange} />}
+          {showRegistro ? <Registrar data={data} change={handleChange} /> : <Mantenimiento change={handleChange} />}
         </div>
 
       </div>
@@ -28,10 +27,10 @@ export default function registerProduct({ data, dataProd }) {
 registerProduct.layout = Admin;
 
 export async function getServerSideProps() {
-  const res = await fetch('https://backendfacturacion.herokuapp.com/productos/categorias')
+  const res = await fetch(`${backend_url}/productos/categorias`)
   const data = await res.json()
 
-  const resProd = await fetch('https://backendfacturacion.herokuapp.com/productos/obtener')
+  const resProd = await fetch(`${backend_url}/productos/obtener`)
   const dataProd = await resProd.json()
   return {
     props: {

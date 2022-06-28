@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Cookies from "js-cookie"
+import backend_url from 'config/backend';
 
 import Admin from "layouts/Admin.js";
 import FacturaForm from "components/Cards/FacturaForm.js";
@@ -28,7 +29,7 @@ generarFactura.layout = Admin;
 
 export async function getServerSideProps() {
 
-  const res = await fetch('https://backendfacturacion.herokuapp.com/productos/obtener');
+  const res = await fetch(`${backend_url}/productos/obtener`);
   const data = await res.json();
   return {
     props: {
