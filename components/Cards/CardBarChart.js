@@ -1,37 +1,21 @@
 import React from "react";
 import Chart from "chart.js";
 
-export default function CardBarChart() {
+export default function CardBarChart({labels, dataset}) {
   React.useEffect(() => {
     let config = {
       type: "bar",
       data: {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
+        labels: labels,
         datasets: [
           {
             label: new Date().getFullYear(),
             backgroundColor: "#ed64a6",
             borderColor: "#ed64a6",
-            data: [30, 78, 56, 34, 100, 45, 13],
+            data: dataset,
             fill: false,
             barThickness: 8,
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [27, 68, 86, 74, 10, 4, 87],
-            barThickness: 8,
-          },
+          }
         ],
       },
       options: {
@@ -47,7 +31,10 @@ export default function CardBarChart() {
         },
         hover: {
           mode: "nearest",
-          intersect: true,
+          intersect: false,
+          filter:{
+            type: 'none'
+          }
         },
         legend: {
           labels: {
@@ -59,10 +46,10 @@ export default function CardBarChart() {
         scales: {
           xAxes: [
             {
-              display: false,
+              display: true,
               scaleLabel: {
-                display: true,
-                labelString: "Month",
+                display: false,
+                labelString: "Meses",
               },
               gridLines: {
                 borderDash: [2],
@@ -105,12 +92,17 @@ export default function CardBarChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-                Performance
+                Ventas
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                Total orders
+                Ingreso mensual
               </h2>
             </div>
+            <select>
+              <option>2021</option>
+              <option>2022</option>
+              <option>2023</option>
+            </select>
           </div>
         </div>
         <div className="p-4 flex-auto">

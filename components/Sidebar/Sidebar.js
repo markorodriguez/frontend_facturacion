@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie"
@@ -10,7 +10,7 @@ import UserDropdown from "components/Dropdowns/UserDropdown.js";
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const router = useRouter();
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -100,29 +100,55 @@ export default function Sidebar() {
             {/* Navigation */}
 
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-             {isAuthenticated ?  <li className="items-center">
-                <Link href="/admin/registrar-producto">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/registrar-producto") !== -1
-                        ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-blueGray-700 hover:text-blueGray-500")
-                    }
-                  >
-                    <i
+              {isAuthenticated ? <>
+                <li className="items-center">
+                  <Link href="/admin/dashboard">
+                    <a
+                      href="#pablo"
                       className={
-                        "fas fa-tools mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/registrar-producto") !== -1
-                          ? "opacity-75"
-                          : "text-blueGray-300")
+                        "text-xs uppercase py-3 font-bold block " +
+                        (router.pathname.indexOf("/admin/dashboard") !== -1
+                          ? "text-lightBlue-500 hover:text-lightBlue-600"
+                          : "text-blueGray-700 hover:text-blueGray-500")
                       }
-                    ></i>{" "}
-                    Registrar productos
-                  </a>
-                </Link>
-              </li> : null}
+                    >
+                      <i
+                        className={
+                          "fas fa-tv mr-2 text-sm " +
+                          (router.pathname.indexOf("/admin/dashboard") !== -1
+                            ? "opacity-75"
+                            : "text-blueGray-300")
+                        }
+                      ></i>{" "}
+                      Dashboard
+                    </a>
+                  </Link>
+                </li>
+                <li className="items-center">
+                  <Link href="/admin/registrar-producto">
+                    <a
+                      href="#pablo"
+                      className={
+                        "text-xs uppercase py-3 font-bold block " +
+                        (router.pathname.indexOf("/admin/registrar-producto") !== -1
+                          ? "text-lightBlue-500 hover:text-lightBlue-600"
+                          : "text-blueGray-700 hover:text-blueGray-500")
+                      }
+                    >
+                      <i
+                        className={
+                          "fas fa-tools mr-2 text-sm " +
+                          (router.pathname.indexOf("/admin/registrar-producto") !== -1
+                            ? "opacity-75"
+                            : "text-blueGray-300")
+                        }
+                      ></i>{" "}
+                      Registrar productos
+                    </a>
+                  </Link>
+                </li>
+              </>
+                : null}
 
               <li className="items-center">
                 <Link href="/admin/generar-factura">
@@ -171,20 +197,20 @@ export default function Sidebar() {
                 </Link>
               </li>
 
-                  {
-                    isAuthenticated ?  <li className="items-center">
-                    <Link href="/admin/register">
-                      <a
-                        href="#pablo"
-                        className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                      >
-                        <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
-                        Registrar usuario
-                      </a>
-                    </Link>
-                  </li> : null
-                  }
-             
+              {
+                isAuthenticated ? <li className="items-center">
+                  <Link href="/admin/register">
+                    <a
+                      href="#pablo"
+                      className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                    >
+                      <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
+                      Registrar usuario
+                    </a>
+                  </Link>
+                </li> : null
+              }
+
             </ul>
 
             {/* Divider */}
@@ -199,15 +225,15 @@ export default function Sidebar() {
               <li className="items-center">
                 <Link href="/auth/login">
                   <a>
-                  <button
-                type="button"
-                className="bg-blueGray-700  active:bg-blueGray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-              >
-                Cerrar Sesión
-              </button>
+                    <button
+                      type="button"
+                      className="bg-blueGray-700  active:bg-blueGray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    >
+                      Cerrar Sesión
+                    </button>
                   </a>
                 </Link>
-              
+
               </li>
             </ul>
 
