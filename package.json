@@ -20,6 +20,7 @@
     "gulp-append-prepend": "1.0.8",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
     "next": "10.0.9",
     "nookies": "^2.5.2",
     "react": "17.0.1",
